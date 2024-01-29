@@ -16,9 +16,9 @@ API_HASH = os.environ.get("API_HASH", None)
 BOT_TOKEN = os.environ.get("BOT_TOKEN", None) 
 MONGO_URL = os.environ.get("MONGO_URL", None)
 BOT_USERNAME = os.environ.get("BOT_USERNAME","") 
-UPDATE_CHNL = os.environ.get("UPDATE_CHNL","mr_sukkun")
-OWNER_USERNAME = os.environ.get("OWNER_USERNAME","legend_coder")
-SUPPORT_GRP = os.environ.get("SUPPORT_GRP","the_support_chat")
+UPDATE_CHNL = os.environ.get("UPDATE_CHNL","ANGEL_K_WORLD")
+OWNER_USERNAME = os.environ.get("OWNER_USERNAME","smart_hu")
+SUPPORT_GRP = os.environ.get("SUPPORT_GRP","IND_PAWAN")
 BOT_NAME = os.environ.get("BOT_NAME","CHATBOT")
 START_IMG = os.environ.get("START_IMG","")
 
@@ -46,7 +46,7 @@ SOURCE_TEXT = f"""
 ᴄʟɪᴄᴋ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ ᴛᴏ ɢᴇᴛ ᴛʜᴇ sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ**
 """
 SOURCE_BUTTONS = InlineKeyboardMarkup([[InlineKeyboardButton('sᴏᴜʀᴄᴇ', callback_data='hurr')], [InlineKeyboardButton(" ꜱᴜᴘᴘᴏʀᴛ ", url=f"https://t.me/{SUPPORT_GRP}"), InlineKeyboardButton(text="ʙᴀᴄᴋ ", callback_data="HELP_BACK")]])
-SOURCE = 'https://github.com/Noob-mukesh/Chatbot'
+SOURCE = 'https://te.legra.ph/file/24425a36dacd6fddb4a6d.mp4'
 x=["❤️","🎉","✨","🪸","🎉","🎈","🎯"]
 g=choice(x)
 async def is_admins(chat_id: int):
@@ -59,32 +59,32 @@ async def is_admins(chat_id: int):
 
 MAIN = [
     [
-        InlineKeyboardButton(text="ᴅᴇᴠᴇʟᴏᴘᴇʀ", url=f"https://t.me/{OWNER_USERNAME}"),
-        InlineKeyboardButton(text=" ꜱᴜᴘᴘᴏʀᴛ ", url=f"https://t.me/{SUPPORT_GRP}"),
+        InlineKeyboardButton(text="✨ᴅᴇᴠᴇʟᴏᴘᴇʀ✨", url=f"https://t.me/{OWNER_USERNAME}"),
+        InlineKeyboardButton(text=" ⭐ꜱᴜᴘᴘᴏʀᴛ⭐ ", url=f"https://t.me/{SUPPORT_GRP}"),
     ],
     [
         InlineKeyboardButton(
-            text="ᴀᴅᴅ ᴍᴇ ʙᴀʙʏ",
+            text="😍ᴀᴅᴅ ᴍᴇ ʙᴀʙʏ😍",
             url=f"https://t.me/{BOT_USERNAME}?startgroup=true",
         ),
     ],
     [
-        InlineKeyboardButton(text="ʜᴇʟᴘ & ᴄᴍᴅs ", callback_data="HELP"),
+        InlineKeyboardButton(text="🐼ʜᴇʟᴘ & ᴄᴍᴅs🐼 ", callback_data="HELP"),
     ],
     [
-        InlineKeyboardButton(text="sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ", callback_data='source'),
-        InlineKeyboardButton(text=" ᴜᴘᴅᴀᴛᴇs ", url=f"https://t.me/{UPDATE_CHNL}"),
+        InlineKeyboardButton(text="🍂sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ🍂", callback_data='source'),
+        InlineKeyboardButton(text=" 🥀ᴜᴘᴅᴀᴛᴇs🥀 ", url=f"https://t.me/{UPDATE_CHNL}"),
     ],
 ]
 PNG_BTN = [
     [
          InlineKeyboardButton(
-             text="ᴀᴅᴅ ᴍᴇ ʙᴀʙʏ",
+             text="😍ᴀᴅᴅ ᴍᴇ ʙᴀʙʏ😍",
              url=f"https://t.me/{BOT_USERNAME}?startgroup=true",
          ),
      ],
      [
-         InlineKeyboardButton(text="sᴜᴘᴘᴏʀᴛ", 
+         InlineKeyboardButton(text="🥀sᴜᴘᴘᴏʀᴛ🥀", 
                               url=f"https://t.me/{SUPPORT_GRP}",
          ),
      ],
@@ -94,7 +94,7 @@ HELP_READ = "**ᴜsᴀɢᴇ ☟︎︎︎**\n**➻ ᴜsᴇ** `/chatbot on` **ᴛ�
 HELP_BACK = [
      
     [
-           InlineKeyboardButton(text="ʙᴀᴄᴋ ", callback_data="HELP_BACK"),
+           InlineKeyboardButton(text="🕹️ʙᴀᴄᴋ🕹️ ", callback_data="HELP_BACK"),
     ]
 ]
 @Mukesh.on_message(filters.incoming & filters.private, group=-1)
@@ -116,7 +116,7 @@ async def must_join_channel(bot: Client, msg: Message):
                     reply_markup=InlineKeyboardMarkup(
                         [
                             [
-                                InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url=link),
+                                InlineKeyboardButton("🥀ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ🥀", url=link),
                             ]
                         ]
                     )
@@ -158,7 +158,7 @@ async def cb_handler(Client, query: CallbackQuery):
                   text = START,
                   reply_markup=InlineKeyboardMarkup(MAIN),
         )
-    elif query.data == 'source':
+    elif query.data == '😇source😇':
         await query.message.edit_text(SOURCE_TEXT, reply_markup=SOURCE_BUTTONS)
     elif query.data == 'hurr':
         await query.answer()
