@@ -20,12 +20,7 @@ UPDATE_CHNL = os.environ.get("UPDATE_CHNL","ANGEL_K_WORLD")
 OWNER_USERNAME = os.environ.get("OWNER_USERNAME","smart_hu")
 SUPPORT_GRP = os.environ.get("SUPPORT_GRP","IND_PAWAN")
 BOT_NAME = os.environ.get("BOT_NAME","CHATBOT")
-START_IMG = os.environ.get("START_IMG","https://te.legra.ph/file/84ba85387de3a07b1877a.jpg"
-                          "https://te.legra.ph/file/7076e798ab812c86ff906.jpg"
-                          "https://te.legra.ph/file/ec0e0a3e071e52e4beffb.jpg"
-                          "https://te.legra.ph/file/0c31b79f722177dccf90d.jpg"
-                          "https://te.legra.ph/file/a68c1ee6d50fc5b7c6d3f.jpg")
-
+START_IMG = os.environ.get("START_IMG","")
 STKR = os.environ.get("STKR")
 
 
