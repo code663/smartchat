@@ -1,80 +1,465 @@
-from os import getenv
+from pyrogram import Client, filters
+from pyrogram.types import *
+from pymongo import MongoClient
+from pyrogram.enums import ChatAction
+import requests
+import random
+from random import choice
+import os
+import re
+import asyncio
+import time
+from datetime import datetime
+from pyrogram import enums
+API_ID = os.environ.get("API_ID", None) 
+API_HASH = os.environ.get("API_HASH", None) 
+BOT_TOKEN = os.environ.get("BOT_TOKEN", None) 
+MONGO_URL = os.environ.get("MONGO_URL", None)
+BOT_USERNAME = os.environ.get("BOT_USERNAME","") 
+UPDATE_CHNL = os.environ.get("UPDATE_CHNL","ANGEL_K_WORLD")
+OWNER_USERNAME = os.environ.get("OWNER_USERNAME","smart_hu")
+SUPPORT_GRP = os.environ.get("SUPPORT_GRP","IND_PAWAN")
+BOT_NAME = os.environ.get("BOT_NAME","CHATBOT")
+START_IMG = os.environ.get("START_IMG","")
 
-from dotenv import load_dotenv
+STKR = os.environ.get("STKR")
 
-load_dotenv()
 
-API_ID = int(getenv("API_ID", 27353035))
-API_HASH = getenv("API_HASH", "cf2a75861140ceb746c7796e07cbde9e")
-BOT_TOKEN = getenv("BOT_TOKEN", None)
-OWNER_ID = int(getenv("OWNER_ID", "6306738739"))
-MONGO_URL = getenv("MONGO_URL", None)
-SUPPORT_GRP = getenv("SUPPORT_GRP", "IND_PAWAN")
-UPDATE_CHNL = getenv("UPDATE_CHNL", "ANGEL_K_WORLD")
-OWNER_USERNAME = getenv("OWNER_USERNAME", "PAWAN_IS_BACK")
+StartTime = time.time()
+Mukesh = Client(
+    "chat-bot" ,
+    api_id = API_ID,
+    api_hash = API_HASH ,
+    bot_token = BOT_TOKEN
+)
+START =f"""
+**๏ ʜᴇʏ, ɪ ᴀᴍ {BOT_NAME}**
+**➻ᴀɴ ᴀɪ-ʙᴀsᴇᴅ ᴄʜᴀᴛʙᴏᴛ.**
+**──────────────────**
+**➻ ᴜsᴀɢᴇ /chatbot [on/off]**
+**๏ ᴛᴏ ɢᴇᴛ ʜᴇʟᴘ ᴜsᴇ /help**
+"""
+SOURCE_TEXT = f"""
+**๏ ʜᴇʏ, ɪ ᴀᴍ [{BOT_NAME}]
+➻ ᴀɴ ᴀɪ-ʙᴀsᴇᴅ ᴄʜᴀᴛʙᴏᴛ.
+──────────────────
+ᴄʟɪᴄᴋ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ ᴛᴏ ɢᴇᴛ ᴛʜᴇ sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ**
+"""
+SOURCE_BUTTONS = InlineKeyboardMarkup([[InlineKeyboardButton('sᴏᴜʀᴄᴇ', callback_data='hurr')], [InlineKeyboardButton(" ꜱᴜᴘᴘᴏʀᴛ ", url=f"https://t.me/{SUPPORT_GRP}"), InlineKeyboardButton(text="ʙᴀᴄᴋ ", callback_data="HELP_BACK")]])
+SOURCE = ''
+x=["❤️","🎉","✨","🪸","🎉","🎈","🎯"]
+g=choice(x)
+async def is_admins(chat_id: int):
+    return [
+        member.user.id
+        async for member in Mukesh.get_chat_members(
+            chat_id, filter=enums.ChatMembersFilter.ADMINISTRATORS
+        )
+    ]
 
-# Random Start Images
-IMG = [
-    "https://te.legra.ph/file/5bf629d10afd4af953585.jpg",
-    "https://te.legra.ph/file/7a321b99fe99d9d8b5117.jpg",
-    "https://te.legra.ph/file/c482a7e55b459ffe07502.jpg",
-    "https://telegra.ph//file/0879fbdb307005c1fa8ab.jpg",
-    "https://telegra.ph//file/19e3a9d5c0985702497fb.jpg",
-    "https://telegra.ph//file/b5fa277081dddbddd0b12.jpg",
-    "https://telegra.ph//file/96e96245fe1afb82d0398.jpg",
-    "https://telegra.ph//file/fb140807129a3ccb60164.jpg",
-    "https://telegra.ph//file/09c9ea0e2660efae6f62a.jpg",
-    "https://telegra.ph//file/3b59b15e1914b4fa18b71.jpg",
-    "https://telegra.ph//file/efb26cc17eef6fe82d910.jpg",
-    "https://telegra.ph//file/ab4925a050e07b00f63c5.jpg",
-    "https://telegra.ph//file/d169a77fd52b46e421414.jpg",
-    "https://telegra.ph//file/dab9fc41f214f9cded1bb.jpg",
-    "https://telegra.ph//file/e05d6e4faff7497c5ae56.jpg",
-    "https://telegra.ph//file/1e54f0fff666dd53da66f.jpg",
-    "https://telegra.ph//file/18e98c60b253d4d926f5f.jpg",
-    "https://telegra.ph//file/b1f7d9702f8ea590b2e0c.jpg",
-    "https://telegra.ph//file/7bb62c8a0f399f6ee1f33.jpg",
-    "https://telegra.ph//file/dd00c759805082830b6b6.jpg",
-    "https://telegra.ph//file/3b996e3241cf93d102adc.jpg",
-    "https://telegra.ph//file/610cc4522c7d0f69e1eb8.jpg",
-    "https://telegra.ph//file/bc97b1e9bbe6d6db36984.jpg",
-    "https://telegra.ph//file/2ddf3521636d4b17df6dd.jpg",
-    "https://telegra.ph//file/72e4414f618111ea90a57.jpg",
-    "https://telegra.ph//file/a958417dcd966d341bfe2.jpg",
-    "https://telegra.ph//file/0afd9c2f70c6328a1e53a.jpg",
-    "https://telegra.ph//file/82ff887aad046c3bcc9a3.jpg",
-    "https://telegra.ph//file/8ba64d5506c23acb67ff4.jpg",
-    "https://telegra.ph//file/8ba64d5506c23acb67ff4.jpg",
-    "https://telegra.ph//file/a7cba6e78bb63e1b4aefb.jpg",
-    "https://telegra.ph//file/f8ba75bdbb9931cbc8229.jpg",
-    "https://telegra.ph//file/07bb5f805178ec24871d3.jpg",
-    "https://telegra.ph/file/ec0ed654f5f5cefc90f95.jpg",
-    "https://telegra.ph/file/f6aa2a3659462401cb600.jpg",
-    "https://telegra.ph/file/0c3d91bcf75524a844883.jpg",
-    "https://telegra.ph/file/6c5df27e71e074f1c7123.jpg",
-    "https://telegra.ph/file/ff2ddc282fe7868e3cf73.jpg",
-    "https://telegra.ph/file/6130ea9373d5f60898a52.jpg",
-    "https://telegra.ph/file/45e5da1eab8f5892981ca.jpg",
+MAIN = [
+    [
+        InlineKeyboardButton(text="ᴅᴇᴠᴇʟᴏᴘᴇʀ", url=f"https://t.me/{OWNER_USERNAME}"),
+        InlineKeyboardButton(text=" ꜱᴜᴘᴘᴏʀᴛ ", url=f"https://t.me/{SUPPORT_GRP}"),
+    ],
+    [
+        InlineKeyboardButton(
+            text="ᴀᴅᴅ ᴍᴇ ʙᴀʙʏ",
+            url=f"https://t.me/{BOT_USERNAME}?startgroup=true",
+        ),
+    ],
+    [
+        InlineKeyboardButton(text="ʜᴇʟᴘ & ᴄᴍᴅs ", callback_data="HELP"),
+    ],
+    [
+        InlineKeyboardButton(text="sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ", callback_data='source'),
+        InlineKeyboardButton(text=" ᴜᴘᴅᴀᴛᴇs ", url=f"https://t.me/{UPDATE_CHNL}"),
+    ],
+]
+PNG_BTN = [
+    [
+         InlineKeyboardButton(
+             text="ᴀᴅᴅ ᴍᴇ ʙᴀʙʏ",
+             url=f"https://t.me/{BOT_USERNAME}?startgroup=true",
+         ),
+     ],
+     [
+         InlineKeyboardButton(text="sᴜᴘᴘᴏʀᴛ", 
+                              url=f"https://t.me/{SUPPORT_GRP}",
+         ),
+     ],
 ]
 
-
-# Random Stickers
-STICKER = [
-    "CAACAgUAAx0CYlaJawABBy4vZaieO6T-Ayg3mD-JP-f0yxJngIkAAv0JAALVS_FWQY7kbQSaI-geBA",
-    "CAACAgUAAx0CYlaJawABBy4rZaid77Tf70SV_CfjmbMgdJyVD8sAApwLAALGXCFXmCx8ZC5nlfQeBA",
-    "CAACAgUAAx0CYlaJawABBy4jZaidvIXNPYnpAjNnKgzaHmh3cvoAAiwIAAIda2lVNdNI2QABHuVVHgQ",
+HELP_READ = "**ᴜsᴀɢᴇ ☟︎︎︎**\n**➻ ᴜsᴇ** `/chatbot on` **ᴛᴏ ᴇɴᴀʙʟᴇ ᴄʜᴀᴛʙᴏᴛ.**\n**➻ ᴜsᴇ** `/chatbot off` **ᴛᴏ ᴅɪsᴀʙʟᴇ ᴛʜᴇ ᴄʜᴀᴛʙᴏᴛ.**\n**๏ ɴᴏᴛᴇ ➻ ʙᴏᴛʜ ᴛʜᴇ ᴀʙᴏᴠᴇ ᴄᴏᴍᴍᴀɴᴅs ғᴏʀ ᴄʜᴀᴛ-ʙᴏᴛ ᴏɴ/ᴏғғ ᴡᴏʀᴋ ɪɴ ɢʀᴏᴜᴘ ᴏɴʟʏ!!**\n\n**➻ ᴜsᴇ** `/ping` **ᴛᴏ ᴄʜᴇᴄᴋ ᴛʜᴇ ᴘɪɴɢ ᴏғ ᴛʜᴇ ʙᴏᴛ.**\n||©️ @mr_sukkun||"
+HELP_BACK = [
+     
+    [
+           InlineKeyboardButton(text="ʙᴀᴄᴋ ", callback_data="HELP_BACK"),
+    ]
 ]
+@Mukesh.on_message(filters.incoming & filters.private, group=-1)
+async def must_join_channel(bot: Client, msg: Message):
+    if not UPDATE_CHNL:
+        return
+    try:
+        try:
+            await bot.get_chat_member(UPDATE_CHNL, msg.from_user.id)
+        except UserNotParticipant:
+            if UPDATE_CHNL.isalpha():
+                link = "https://t.me/" + UPDATE_CHNL
+            else:
+                chat_info = await bot.get_chat(UPDATE_CHNL)
+                link = chat_info.invite_link
+            try:
+                await msg.reply_photo(
+                    photo=START_IMG, caption=f"» ᴀᴄᴄᴏʀᴅɪɴɢ ᴛᴏ ᴍʏ ᴅᴀᴛᴀʙᴀsᴇ ʏᴏᴜ'ᴠᴇ ɴᴏᴛ ᴊᴏɪɴᴇᴅ [ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ]({link}) ʏᴇᴛ, ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴜsᴇ ᴍᴇ ᴛʜᴇɴ ᴊᴏɪɴ [ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ]({link}) ᴀɴᴅ sᴛᴀʀᴛ ᴍᴇ ᴀɢᴀɪɴ !",
+                    reply_markup=InlineKeyboardMarkup(
+                        [
+                            [
+                                InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇ ᴄʜᴀɴɴᴇʟ", url=link),
+                            ]
+                        ]
+                    )
+                )
+                await msg.stop_propagation()
+            except ChatWriteForbidden:
+                pass
+    except ChatAdminRequired:
+        print(f"Promote me as an admin in the UPDATE CHANNEL  : {UPDATE_CHNL} !")
+@Mukesh.on_message(filters.command(["start",f"start@{BOT_USERNAME}"]))
+async def restart(client, m: Message):
+        accha = await m.reply_text(
+                        text = f"{g}")
+        await asyncio.sleep(1)
+        await accha.edit("ᴘɪɴɢ ᴘᴏɴɢ ꜱᴛᴀʀᴛɪɴɢ..")
+        await asyncio.sleep(0.5)
+        await accha.edit("ᴜᴍ ꜱᴛᴀʀᴛɪɴɢ..")
+        await asyncio.sleep(0.5)
+        await accha.delete()
+        umm = await m.reply_sticker(
+                  sticker = STKR,
+        )
+        await asyncio.sleep(1)
+        await umm.delete()
+        await m.reply_photo(
+            photo = START_IMG,
+            caption=START,
+            reply_markup=InlineKeyboardMarkup(MAIN),
+        )
+@Mukesh.on_callback_query()
+async def cb_handler(Client, query: CallbackQuery):
+    if query.data == "HELP":
+     await query.message.edit_text(
+                      text = HELP_READ,
+                      reply_markup = InlineKeyboardMarkup(HELP_BACK),
+     )
+    elif query.data == "HELP_BACK":
+            await query.message.edit(
+                  text = START,
+                  reply_markup=InlineKeyboardMarkup(MAIN),
+        )
+    elif query.data == 'source':
+        await query.message.edit_text(SOURCE_TEXT, reply_markup=SOURCE_BUTTONS)
+    elif query.data == 'hurr':
+        await query.answer()
+        await query.message.edit_text(SOURCE)
+@Mukesh.on_message(filters.command(["help", f"help@{BOT_USERNAME}"], prefixes=["","+", ".", "/", "-", "?", "$"]))
+async def restart(client, message):
+    hmm = await message.reply_photo(START_IMG,
+                             caption= HELP_READ,
+                        reply_markup= InlineKeyboardMarkup(HELP_BACK),
+       )
+@Mukesh.on_message(filters.command(['source', 'repo']))
+async def source(bot, m):
+    await m.reply_photo(START_IMG, caption=SOURCE_TEXT, reply_markup=SOURCE_BUTTONS, reply_to_message_id=m.id)
+#  alive
+@Mukesh.on_message(filters.command(["ping","alive"], prefixes=["","+", "/", "-", "?", "$", "&","."]))
+async def ping(client, message: Message):
+        start = datetime.now()
+        t = "__ριиgιиg...__"
+        txxt = await message.reply(t)
+        await asyncio.sleep(0.25)
+        await txxt.edit_text("__ριиgιиg.....__")
+        await asyncio.sleep(0.35)
+        await txxt.delete()
+        end = datetime.now()
+        ms = (end-start).microseconds / 1000
+        await message.reply_photo(
+                             photo=START_IMG,
+                             caption=f"ʜᴇʏ ʙᴀʙʏ!!\n**[{BOT_NAME}](t.me/{BOT_USERNAME})** ɪꜱ ᴀʟɪᴠᴇ 🥀 ᴀɴᴅ ᴡᴏʀᴋɪɴɢ ꜰɪɴᴇ ᴡɪᴛʜ ᴘᴏɴɢ ᴏꜰ \n➥ `{ms}` ms\n\n**ᴍᴀᴅᴇ ᴡɪᴛʜ ❣️ ʙʏ || [ᴍᴜᴋᴇsʜ](https://t.me/legend_coder)||**",
+                             reply_markup=InlineKeyboardMarkup(PNG_BTN),
+       )
+
+@Mukesh.on_message(
+    filters.command(["chatbot off", f"chatbot@{BOT_USERNAME} off"], prefixes=["/", ".", "?", "-"])
+    & ~filters.private)
+async def chatbotofd(client, message):
+    vickdb = MongoClient(MONGO_URL)    
+    vick = vickdb["VickDb"]["Vick"]     
+    if message.from_user:
+        user = message.from_user.id
+        chat_id = message.chat.id
+        if user not in (
+           await is_admins(chat_id)
+        ):
+           return await message.reply_text(
+                "You are not admin"
+            )
+    is_vick = vick.find_one({"chat_id": message.chat.id})
+    if not is_vick:
+        vick.insert_one({"chat_id": message.chat.id})
+        await message.reply_text(f"Chatbot Disabled!")
+    if is_vick:
+        await message.reply_text(f"ChatBot Already Disabled")
+    
+
+@Mukesh.on_message(
+    filters.command(["chatbot on", f"chatbot@{BOT_USERNAME} on"] ,prefixes=["/", ".", "?", "-"])
+    & ~filters.private)
+async def chatboton(client, message):
+    vickdb = MongoClient(MONGO_URL)    
+    vick = vickdb["VickDb"]["Vick"]     
+    if message.from_user:
+        user = message.from_user.id
+        chat_id = message.chat.id
+        if user not in (
+            await is_admins(chat_id)
+        ):
+            return await message.reply_text(
+                "You are not admin"
+            )
+    is_vick = vick.find_one({"chat_id": message.chat.id})
+    if not is_vick:           
+        await message.reply_text(f"Chatbot Already Enabled")
+    if is_vick:
+        vick.delete_one({"chat_id": message.chat.id})
+        await message.reply_text(f"ChatBot Enabled!")
+    
+
+@Mukesh.on_message(
+    filters.command(["chatbot", f"chatbot@{BOT_USERNAME}"], prefixes=["/", ".", "?", "-"])
+    & ~filters.private)
+async def chatbot(client, message):
+    await message.reply_text(f"**ᴜsᴀɢᴇ:**\n/**chatbot [on/off]**\n**ᴄʜᴀᴛ-ʙᴏᴛ ᴄᴏᴍᴍᴀɴᴅ(s) ᴡᴏʀᴋ ɪɴ ɢʀᴏᴜᴘ ᴏɴʟʏ!**")
 
 
-EMOJIOS = [
-    "💣",
-    "💥",
-    "🪄",
-    "🧨",
-    "⚡",
-    "🤡",
-    "👻",
-    "🎃",
-    "🎩",
-    "🕊",
-]
+@Mukesh.on_message(
+ (
+        filters.text
+        | filters.sticker
+    )
+    & ~filters.private
+    & ~filters.bot,
+)
+async def vickai(client: Client, message: Message):
+
+   chatdb = MongoClient(MONGO_URL)
+   chatai = chatdb["Word"]["WordDb"]   
+
+   if not message.reply_to_message:
+       vickdb = MongoClient(MONGO_URL)
+       vick = vickdb["VickDb"]["Vick"] 
+       is_vick = vick.find_one({"chat_id": message.chat.id})
+       if not is_vick:
+           await Mukesh.send_chat_action(message.chat.id, ChatAction.TYPING)
+           K = []  
+           is_chat = chatai.find({"word": message.text})  
+           k = chatai.find_one({"word": message.text})      
+           if k:               
+               for x in is_chat:
+                   K.append(x['text'])          
+               hey = random.choice(K)
+               is_text = chatai.find_one({"text": hey})
+               Yo = is_text['check']
+               if Yo == "sticker":
+                   await message.reply_sticker(f"{hey}")
+               if not Yo == "sticker":
+                   await message.reply_text(f"{hey}")
+   
+   if message.reply_to_message:  
+       vickdb = MongoClient(MONGO_URL)
+       vick = vickdb["VickDb"]["Vick"] 
+       is_vick = vick.find_one({"chat_id": message.chat.id})    
+       getme = await Mukesh.get_me()
+       bot_id = getme.id                             
+       if message.reply_to_message.from_user.id == bot_id: 
+           if not is_vick:                   
+               await Mukesh.send_chat_action(message.chat.id, ChatAction.TYPING)
+               K = []  
+               is_chat = chatai.find({"word": message.text})
+               k = chatai.find_one({"word": message.text})      
+               if k:       
+                   for x in is_chat:
+                       K.append(x['text'])
+                   hey = random.choice(K)
+                   is_text = chatai.find_one({"text": hey})
+                   Yo = is_text['check']
+                   if Yo == "sticker":
+                       await message.reply_sticker(f"{hey}")
+                   if not Yo == "sticker":
+                       await message.reply_text(f"{hey}")
+       if not message.reply_to_message.from_user.id == bot_id:          
+           if message.sticker:
+               is_chat = chatai.find_one({"word": message.reply_to_message.text, "id": message.sticker.file_unique_id})
+               if not is_chat:
+                   chatai.insert_one({"word": message.reply_to_message.text, "text": message.sticker.file_id, "check": "sticker", "id": message.sticker.file_unique_id})
+           if message.text:                 
+               is_chat = chatai.find_one({"word": message.reply_to_message.text, "text": message.text})                 
+               if not is_chat:
+                   chatai.insert_one({"word": message.reply_to_message.text, "text": message.text, "check": "none"})    
+               
+
+@Mukesh.on_message(
+ (
+        filters.sticker
+        | filters.text
+    )
+    & ~filters.private
+    & ~filters.bot,
+)
+async def vickstickerai(client: Client, message: Message):
+
+   chatdb = MongoClient(MONGO_URL)
+   chatai = chatdb["Word"]["WordDb"]   
+
+   if not message.reply_to_message:
+       vickdb = MongoClient(MONGO_URL)
+       vick = vickdb["VickDb"]["Vick"] 
+       is_vick = vick.find_one({"chat_id": message.chat.id})
+       if not is_vick:
+           await Mukesh.send_chat_action(message.chat.id, ChatAction.TYPING)
+           K = []  
+           is_chat = chatai.find({"word": message.sticker.file_unique_id})      
+           k = chatai.find_one({"word": message.text})      
+           if k:           
+               for x in is_chat:
+                   K.append(x['text'])
+               hey = random.choice(K)
+               is_text = chatai.find_one({"text": hey})
+               Yo = is_text['check']
+               if Yo == "text":
+                   await message.reply_text(f"{hey}")
+               if not Yo == "text":
+                   await message.reply_sticker(f"{hey}")
+   
+   if message.reply_to_message:
+       vickdb = MongoClient(MONGO_URL)
+       vick = vickdb["VickDb"]["Vick"] 
+       is_vick = vick.find_one({"chat_id": message.chat.id})
+       getme = await Mukesh.get_me()
+       bot_id = getme.id
+       if message.reply_to_message.from_user.id == bot_id: 
+           if not is_vick:                    
+               await Mukesh.send_chat_action(message.chat.id, ChatAction.TYPING)
+               K = []  
+               is_chat = chatai.find({"word": message.text})
+               k = chatai.find_one({"word": message.text})      
+               if k:           
+                   for x in is_chat:
+                       K.append(x['text'])
+                   hey = random.choice(K)
+                   is_text = chatai.find_one({"text": hey})
+                   Yo = is_text['check']
+                   if Yo == "text":
+                       await message.reply_text(f"{hey}")
+                   if not Yo == "text":
+                       await message.reply_sticker(f"{hey}")
+       if not message.reply_to_message.from_user.id == bot_id:          
+           if message.text:
+               is_chat = chatai.find_one({"word": message.reply_to_message.sticker.file_unique_id, "text": message.text})
+               if not is_chat:
+                   toggle.insert_one({"word": message.reply_to_message.sticker.file_unique_id, "text": message.text, "check": "text"})
+           if message.sticker:                 
+               is_chat = chatai.find_one({"word": message.reply_to_message.sticker.file_unique_id, "text": message.sticker.file_id})                 
+               if not is_chat:
+                   chatai.insert_one({"word": message.reply_to_message.sticker.file_unique_id, "text": message.sticker.file_id, "check": "none"})    
+               
+
+
+@Mukesh.on_message(
+    (
+        filters.text
+        | filters.sticker
+    )
+    & filters.private
+    & ~filters.bot,
+)
+async def vickprivate(client: Client, message: Message):
+
+   chatdb = MongoClient(MONGO_URL)
+   chatai = chatdb["Word"]["WordDb"]
+   if not message.reply_to_message: 
+       await Mukesh.send_chat_action(message.chat.id, ChatAction.TYPING)
+       K = []  
+       is_chat = chatai.find({"word": message.text})                 
+       for x in is_chat:
+           K.append(x['text'])
+       hey = random.choice(K)
+       is_text = chatai.find_one({"text": hey})
+       Yo = is_text['check']
+       if Yo == "sticker":
+           await message.reply_sticker(f"{hey}")
+       if not Yo == "sticker":
+           await message.reply_text(f"{hey}")
+   if message.reply_to_message:            
+       getme = await Mukesh.get_me()
+       bot_id = getme.id       
+       if message.reply_to_message.from_user.id == bot_id:                    
+           await Mukesh.send_chat_action(message.chat.id, ChatAction.TYPING)
+           K = []  
+           is_chat = chatai.find({"word": message.text})                 
+           for x in is_chat:
+               K.append(x['text'])
+           hey = random.choice(K)
+           is_text = chatai.find_one({"text": hey})
+           Yo = is_text['check']
+           if Yo == "sticker":
+               await message.reply_sticker(f"{hey}")
+           if not Yo == "sticker":
+               await message.reply_text(f"{hey}")
+       
+
+@Mukesh.on_message(
+ (
+        filters.sticker
+        | filters.text
+    )
+    & filters.private
+    & ~filters.bot,
+)
+async def vickprivatesticker(client: Client, message: Message):
+
+   chatdb = MongoClient(MONGO_URL)
+   chatai = chatdb["Word"]["WordDb"] 
+   if not message.reply_to_message:
+       await Mukesh.send_chat_action(message.chat.id, ChatAction.TYPING)
+       K = []  
+       is_chat = chatai.find({"word": message.sticker.file_unique_id})                 
+       for x in is_chat:
+           K.append(x['text'])
+       hey = random.choice(K)
+       is_text = chatai.find_one({"text": hey})
+       Yo = is_text['check']
+       if Yo == "text":
+           await message.reply_text(f"{hey}")
+       if not Yo == "text":
+           await message.reply_sticker(f"{hey}")
+   if message.reply_to_message:            
+       getme = await Mukesh.get_me()
+       bot_id = getme.id       
+       if message.reply_to_message.from_user.id == bot_id:                    
+           await Mukesh.send_chat_action(message.chat.id, ChatAction.TYPING)
+           K = []  
+           is_chat = chatai.find({"word": message.sticker.file_unique_id})                 
+           for x in is_chat:
+               K.append(x['text'])
+           hey = random.choice(K)
+           is_text = chatai.find_one({"text": hey})
+           Yo = is_text['check']
+           if Yo == "text":
+               await message.reply_text(f"{hey}")
+           if not Yo == "text":
+               await message.reply_sticker(f"{hey}")
+
+print(f"{BOT_NAME} ɪs ᴀʟɪᴠᴇ!")      
+Mukesh.run()
